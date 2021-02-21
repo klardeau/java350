@@ -77,7 +77,7 @@ public class EmployeTest {
     @Test
     public void testAugmenterSalaire(){
         //Given
-        Double pourc = 1.3;
+        Double pourc = 1.3; //Augmentation de 1.3 donc 30 pourcents
         Employe employe = new Employe();
         employe.setSalaire(1000d);
 
@@ -86,23 +86,6 @@ public class EmployeTest {
 
         //Then
         Assertions.assertThat(employe.getSalaire()).isGreaterThan(1000d);
-
-    }
-
-    //Test salaire si pourcentage infèrieur à 1
-    @Test
-    public void testAugmenterSalaireInfUn(){
-        //Given
-        Double pourc = 0d;
-        Employe employe = new Employe();
-        employe.setSalaire(1000d);
-        Double res = employe.getSalaire();
-
-        //When
-        employe.augmenterSalaire(pourc);
-
-        //Then
-        Assertions.assertThat(employe.getSalaire()).isEqualTo(res);
 
     }
 
@@ -122,7 +105,25 @@ public class EmployeTest {
         Assertions.assertThat(employe.getSalaire()).isEqualTo(res);
     }
 
-//si l'employé n'a pas encore de salaire inscrit
+    //Test salaire si pourcentage infèrieur à 1
+    @Test
+    public void testAugmenterSalaireInfUn(){
+        //Given
+        Double pourc = 0d;
+        Employe employe = new Employe();
+        employe.setSalaire(1000d);
+        Double res = employe.getSalaire();
+
+        //When
+        employe.augmenterSalaire(pourc);
+
+        //Then
+        Assertions.assertThat(employe.getSalaire()).isEqualTo(res);
+
+    }
+
+
+//si l'employé n'a pas encore de salaire inscrit.
     @Test
     public void testAugmenterSalairePasSalaire(){
         //Given
