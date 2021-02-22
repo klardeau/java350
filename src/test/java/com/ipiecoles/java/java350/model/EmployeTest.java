@@ -98,7 +98,8 @@ public class EmployeTest {
 
 
     
-    //EVAL--------------------------------------------------- augmenterSalaire
+    //EVAL---------------------------------------------------
+//----------------------------------------------------- augmenterSalaire--------------------------------------------------------------------//
 //Test salaire si fonctionne
     @Test
     public void testAugmenterSalaire(){
@@ -177,10 +178,10 @@ public class EmployeTest {
         Assertions.assertThat(nb).isEqualTo(nbRtt);
     }
 
-//---------TEST calculPerformanceCommercial----------//
+//----------------------------------------------------------------------TEST calculPerformanceCommercial-------------------------------------------------//
 
     //caTraite null et negatif (same)
-    //BEGIN
+    //BEGIN--
     @Test
     public void testCalculPerformanceCommercialNullCaTraite(){
 
@@ -195,10 +196,10 @@ public class EmployeTest {
         Assertions.assertThatThrownBy(() -> employeService.calculPerformanceCommercial("C12345", -4l, 2l)).hasMessage("Le chiffre d'affaire traité ne peut être négatif ou null !");
 
     }
-    //END
+    //END--
 
     //matricule null et pas commencer par C
-    //BEGIN
+    //BEGIN--
     @Test
     public void testCalculPerformanceCommercialNullMatricule(){
 
@@ -212,10 +213,10 @@ public class EmployeTest {
         Assertions.assertThatThrownBy(() -> employeService.calculPerformanceCommercial("T0001", 2l, 2l)).hasMessage("Le matricule ne peut être null et doit commencer par un C !");
 
     }
-    //END
+    //END--
 
     //caTraite null et negatif (same)
-    //BEGIN
+    //BEGIN--
     @Test
     public void testCalculPerformanceCommercialNullObjectifCa(){
 
@@ -230,7 +231,7 @@ public class EmployeTest {
         Assertions.assertThatThrownBy(() -> employeService.calculPerformanceCommercial("C12345", 1l, -5l)).hasMessage("L'objectif de chiffre d'affaire ne peut être négatif ou null !");
 
     }
-    //END
+    //END--
 
     //je donne matricule CCCCCCC
 
@@ -242,7 +243,7 @@ public class EmployeTest {
 
     }
 
-    //Cas 1
+    //Cas 1 il passe à travers et tombe sur 1
     @Test
     public void testCalculPerformanceCasUn() throws EmployeException {
         when(employeRepository.findByMatricule("C00001")).thenReturn(new Employe("BOB", "Billie", "C00001", LocalDate.now(), 1000d, 1, 1d));
@@ -254,7 +255,7 @@ public class EmployeTest {
         Assertions.assertThat(employe.getValue().getPerformance()).isEqualTo(1);
     }
 
-    //Cas 2
+    //Cas 2 inferieur entre 20 et 5 pourcent donc il trouve 2 -2 = 0 il choisira 1 car 1 sup à 0
     @Test
     public void testCalculPerformanceCasDeux() throws EmployeException {
 
@@ -267,7 +268,7 @@ public class EmployeTest {
         Assertions.assertThat(employe.getValue().getPerformance()).isEqualTo(1);
     }
 
-    //Cas 3
+    //Cas 3 entre -5 et 5 pourcent donc 3(performance) + rien = 3
     @Test
     public void testCalculPerformanceCasTrois() throws EmployeException {
         when(employeRepository.findByMatricule("C00001")).thenReturn(new Employe("BOB", "Billie", "C00001", LocalDate.now(), 1000d, 3, 1d));
@@ -279,7 +280,7 @@ public class EmployeTest {
         Assertions.assertThat(employe.getValue().getPerformance()).isEqualTo(3);
     }
 
-    //Cas 4
+    //Cas 4 sup de 5 à 20 pourcent donc 4(performance) + 1 = 5
     @Test
     public void testCalculPerformanceCasQuatre() throws EmployeException {
         when(employeRepository.findByMatricule("C00001")).thenReturn(new Employe("BOB", "Billie", "C00001", LocalDate.now(), 1000d, 4, 1d));
@@ -291,7 +292,7 @@ public class EmployeTest {
         Assertions.assertThat(employe.getValue().getPerformance()).isEqualTo(5);
     }
 
-    //Cas 5
+    //Cas 5 sup à 20 pourcent donc 5(performance) + 4(au dessus de 20) = 9
     @Test
     public void testCalculPerformanceCasCinq() throws EmployeException {
         when(employeRepository.findByMatricule("C00001")).thenReturn(new Employe("BOB", "Billie", "C00001", LocalDate.now(), 1000d, 5, 1d));

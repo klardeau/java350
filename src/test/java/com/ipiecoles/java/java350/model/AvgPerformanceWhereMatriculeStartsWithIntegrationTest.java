@@ -21,7 +21,7 @@ public class AvgPerformanceWhereMatriculeStartsWithIntegrationTest {
     @Autowired
     private EmployeRepository employeRepository;
 
-    //Test de la moyenne des performances des matricules commençant par K = kinesitherapeute 
+    //Test de la moyenne des performances des matricules commençant par K = kinesitherapeute
     //res devrait etre égale à 5 car 7 et 3 s'annule et 6 et 4 de meme
     @Test
     public void testAvgPerformanceWhereMatriculeStartsWith() throws EmployeException {
