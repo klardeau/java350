@@ -26,6 +26,12 @@ public class EmployeTest {
     @Mock
     private EmployeRepository employeRepository;
 
+    //Problème, les services ont des dépendances extérieurs,
+    // on fait donc des mocks pour simuler le fonctionnement des dépendances
+
+    //Le temps d'un test pour la compréhension
+    //injection du service et du repo pour faire un exemple de test d'intégration
+
     @BeforeEach
     public void setUp(){
         MockitoAnnotations.initMocks(this);
@@ -236,11 +242,11 @@ public class EmployeTest {
 
     }
 
+    //Cas 1
     @Test
     public void testCalculPerformanceCasUn() throws EmployeException {
-        //Employe employe = new Employe("BOB", "Billie", "C00001", LocalDate.now(), 1000d, 1, 1d);
         when(employeRepository.findByMatricule("C00001")).thenReturn(new Employe("BOB", "Billie", "C00001", LocalDate.now(), 1000d, 1, 1d));
-        when(employeRepository.avgPerformanceWhereMatriculeStartsWith("C")).thenReturn(null);
+        when(employeRepository.avgPerformanceWhereMatriculeStartsWith("C")).thenReturn(null);//On empèche l'ajout afin de voir plus facilement si le test fonctionnent pour performance
 
         employeService.calculPerformanceCommercial("C00001", 1l, 2l);
         ArgumentCaptor<Employe> employe = ArgumentCaptor.forClass(Employe.class);
@@ -248,48 +254,54 @@ public class EmployeTest {
         Assertions.assertThat(employe.getValue().getPerformance()).isEqualTo(1);
     }
 
+    //Cas 2
     @Test
     public void testCalculPerformanceCasDeux() throws EmployeException {
 
         when(employeRepository.findByMatricule("C00001")).thenReturn(new Employe("BOB", "Billie", "C00001", LocalDate.now(), 1000d, 2, 1d));
         when(employeRepository.avgPerformanceWhereMatriculeStartsWith("C")).thenReturn(null);
 
-        employeService.calculPerformanceCommercial("C00001", 185l, 200l);
+        employeService.calculPerformanceCommercial("C00001", 85l, 100l);
         ArgumentCaptor<Employe> employe = ArgumentCaptor.forClass(Employe.class);
         Mockito.verify(employeRepository, Mockito.times(1)).save(employe.capture());
         Assertions.assertThat(employe.getValue().getPerformance()).isEqualTo(1);
     }
 
+    //Cas 3
     @Test
     public void testCalculPerformanceCasTrois() throws EmployeException {
         when(employeRepository.findByMatricule("C00001")).thenReturn(new Employe("BOB", "Billie", "C00001", LocalDate.now(), 1000d, 3, 1d));
         when(employeRepository.avgPerformanceWhereMatriculeStartsWith("C")).thenReturn(null);
 
-        employeService.calculPerformanceCommercial("C00001", 196l, 200l);
+        employeService.calculPerformanceCommercial("C00001", 96l, 100l);
         ArgumentCaptor<Employe> employe = ArgumentCaptor.forClass(Employe.class);
         Mockito.verify(employeRepository, Mockito.times(1)).save(employe.capture());
         Assertions.assertThat(employe.getValue().getPerformance()).isEqualTo(3);
     }
 
+    //Cas 4
     @Test
     public void testCalculPerformanceCasQuatre() throws EmployeException {
         when(employeRepository.findByMatricule("C00001")).thenReturn(new Employe("BOB", "Billie", "C00001", LocalDate.now(), 1000d, 4, 1d));
         when(employeRepository.avgPerformanceWhereMatriculeStartsWith("C")).thenReturn(null);
 
-        employeService.calculPerformanceCommercial("C00001", 215l, 200l);
+        employeService.calculPerformanceCommercial("C00001", 115l, 100l);
         ArgumentCaptor<Employe> employe = ArgumentCaptor.forClass(Employe.class);
         Mockito.verify(employeRepository, Mockito.times(1)).save(employe.capture());
         Assertions.assertThat(employe.getValue().getPerformance()).isEqualTo(5);
     }
 
+    //Cas 5
     @Test
     public void testCalculPerformanceCasCinq() throws EmployeException {
         when(employeRepository.findByMatricule("C00001")).thenReturn(new Employe("BOB", "Billie", "C00001", LocalDate.now(), 1000d, 5, 1d));
         when(employeRepository.avgPerformanceWhereMatriculeStartsWith("C")).thenReturn(null);
 
-        employeService.calculPerformanceCommercial("C00001", 260l, 200l);
+        employeService.calculPerformanceCommercial("C00001", 160l, 100l);
         ArgumentCaptor<Employe> employe = ArgumentCaptor.forClass(Employe.class);
         Mockito.verify(employeRepository, Mockito.times(1)).save(employe.capture());
         Assertions.assertThat(employe.getValue().getPerformance()).isEqualTo(9);
     }
+
+
 }
