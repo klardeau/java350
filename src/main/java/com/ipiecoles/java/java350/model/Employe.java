@@ -75,8 +75,8 @@ public class Employe {
                 if(d.isLeapYear())
                 {
                     nbJourSameDimancheAnnee =  nbJourSameDimancheAnnee + 1;
-                    break;
                 }
+                break;
             case FRIDAY:
                 if(d.isLeapYear())
                 {

@@ -97,7 +97,7 @@ public class EmployeTest {
         employe.augmenterSalaire(pourc);
 
         //Then
-        Assertions.assertThat(employe.getSalaire()).isGreaterThan(1000d);
+        Assertions.assertThat(employe.getSalaire()).isEqualTo(1300d);
 
     }
 
