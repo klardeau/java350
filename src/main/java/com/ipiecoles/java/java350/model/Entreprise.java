@@ -29,6 +29,7 @@ public final class Entreprise {
         COEFF_SALAIRE_ETUDES.put(NiveauEtude.INGENIEUR, 1.6);
         COEFF_SALAIRE_ETUDES.put(NiveauEtude.DOCTORAT, 1.7);
 
+        datePaque.put(2016, LocalDate.of(2016, 3, 27));
         datePaque.put(2019, LocalDate.of(2019, 4, 21));
         datePaque.put(2020, LocalDate.of(2020, 4, 12));
         datePaque.put(2021, LocalDate.of(2021, 4, 4));
@@ -51,6 +52,7 @@ public final class Entreprise {
         datePaque.put(2038, LocalDate.of(2038, 4, 25));
         datePaque.put(2039, LocalDate.of(2039, 4, 10));
         datePaque.put(2040, LocalDate.of(2040, 4, 1));
+
     }
 
     public static final String MATRICULE_INITIAL = "00000";
