@@ -84,6 +84,8 @@ public class Employe {
                 } else{ nbJourSameDimancheAnnee =  nbJourSameDimancheAnnee + 1;}
                 break;
             case SATURDAY: nbJourSameDimancheAnnee = nbJourSameDimancheAnnee + 1; break;
+            default:
+                break;
         }
         int nbFerieNoWeek = (int) Entreprise.joursFeries(d).stream().filter(localDate -> localDate.getDayOfWeek().getValue() <= DayOfWeek.FRIDAY.getValue()).count();
         return (int) Math.ceil((nbJoursAnnee - Entreprise.NB_JOURS_MAX_FORFAIT - nbJourSameDimancheAnnee - Entreprise.NB_CONGES_BASE - nbFerieNoWeek) * tempsPartiel);
@@ -96,9 +98,13 @@ public class Employe {
 
     //Augmenter salaire
     public void augmenterSalaire(double pourcentage){
-        if (salaire == null) { throw new IllegalArgumentException("une erreur est survenue le salaire est null"); }
+        if (this.salaire == null || this.salaire == 0) { throw new IllegalArgumentException("une erreur est survenue le salaire est null ou égale à zéro"); }
         if(pourcentage > 1){
             this.salaire = this.salaire * pourcentage;
+        }else if(pourcentage >= 0){
+            throw new IllegalArgumentException("Erreur le salaire ne peut diminuer");
+        }else{
+            throw new IllegalArgumentException("Erreur le salaire ne peut etre negatif");
         }
 
     }

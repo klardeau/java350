@@ -12,30 +12,15 @@ import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+
 public class EmployeTest {
-    @InjectMocks
-    private EmployeService employeService;
-
-    @Mock
-    private EmployeRepository employeRepository;
-
-    //Problème, les services ont des dépendances extérieurs,
-    // on fait donc des mocks pour simuler le fonctionnement des dépendances
-
-    //Le temps d'un test pour la compréhension
-    //injection du service et du repo pour faire un exemple de test d'intégration
-
-    @BeforeEach
-    public void setUp(){
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     //Embauché en 2020. On est en 2020 : 0 an ancienneté
@@ -123,29 +108,23 @@ public class EmployeTest {
         Double pourc = -10d;
         Employe employe = new Employe();
         employe.setSalaire(1000d);
-        Double res = employe.getSalaire();
 
         //When
-        employe.augmenterSalaire(pourc);
-
         //Then
-        Assertions.assertThat(employe.getSalaire()).isEqualTo(res);
+        Assertions.assertThatThrownBy(() -> employe.augmenterSalaire(pourc)).hasMessage("Erreur le salaire ne peut etre negatif");
     }
 
-    //Test salaire si pourcentage infèrieur à 1
+    //Test salaire si pourcentage infèrieur à 1 mais pas negatif
     @Test
     public void testAugmenterSalaireInfUn(){
         //Given
-        Double pourc = 0d;
+        Double pourc = 0.3d;
         Employe employe = new Employe();
         employe.setSalaire(1000d);
-        Double res = employe.getSalaire();
 
         //When
-        employe.augmenterSalaire(pourc);
-
         //Then
-        Assertions.assertThat(employe.getSalaire()).isEqualTo(res);
+        Assertions.assertThatThrownBy(() -> employe.augmenterSalaire(pourc)).hasMessage("Erreur le salaire ne peut diminuer");
 
     }
 
@@ -160,13 +139,27 @@ public class EmployeTest {
 
 
         //hasMessage permet de vérifier si augmenterSalaire à Trhow que le salaire était null
-        Assertions.assertThatThrownBy(() -> employe.augmenterSalaire(pourc)).hasMessage("une erreur est survenue le salaire est null");
+        Assertions.assertThatThrownBy(() -> employe.augmenterSalaire(pourc)).hasMessage("une erreur est survenue le salaire est null ou égale à zéro");
+
+    }
+
+    @Test
+    public void testAugmenterSalaireSalAZero(){
+        //Given
+        Double pourc = 1.3d;
+        Employe employe = new Employe();
+        employe.setSalaire(0d);
+
+
+        //hasMessage permet de vérifier si augmenterSalaire à Trhow que le salaire était null
+        Assertions.assertThatThrownBy(() -> employe.augmenterSalaire(pourc)).hasMessage("une erreur est survenue le salaire est null ou égale à zéro");
 
     }
 
     //Test paramétré pour la NbRTT
     @ParameterizedTest
     @CsvSource({
+            "'2016-03-19', 9",//pour vendredi validé
             "'2019-01-01', 8",//(365 - 218 - 104 - 10 - 25 = 8)*1 car travail 100 pourcent du temps
             "'2021-01-01', 10",
             "'2022-01-01', 10",//(365 - 218 - 105 - 7 - 25 = 10)*1     105 samedi et dimanche
@@ -178,131 +171,6 @@ public class EmployeTest {
         Assertions.assertThat(nb).isEqualTo(nbRtt);
     }
 
-//----------------------------------------------------------------------TEST calculPerformanceCommercial-------------------------------------------------//
-
-    //caTraite null et negatif (same)
-    //BEGIN--
-    @Test
-    public void testCalculPerformanceCommercialNullCaTraite(){
-
-        //hasMessage permet de vérifier si augmenterSalaire à Trhow que le salaire était null
-        Assertions.assertThatThrownBy(() -> employeService.calculPerformanceCommercial("C12345", null, 2l)).hasMessage("Le chiffre d'affaire traité ne peut être négatif ou null !");
-
-    }
-
-    @Test
-    public void testCalculPerformanceCommercialNegaCaTraite(){
-
-        Assertions.assertThatThrownBy(() -> employeService.calculPerformanceCommercial("C12345", -4l, 2l)).hasMessage("Le chiffre d'affaire traité ne peut être négatif ou null !");
-
-    }
-    //END--
-
-    //matricule null et pas commencer par C
-    //BEGIN--
-    @Test
-    public void testCalculPerformanceCommercialNullMatricule(){
-
-        //hasMessage permet de vérifier si augmenterSalaire à Trhow que le salaire était null
-        Assertions.assertThatThrownBy(() -> employeService.calculPerformanceCommercial(null, 2l, 2l)).hasMessage("Le matricule ne peut être null et doit commencer par un C !");
-
-    }
-
-    @Test
-    public void testCalculPerformanceCommercialMatriculePasCommenceParC(){
-        Assertions.assertThatThrownBy(() -> employeService.calculPerformanceCommercial("T0001", 2l, 2l)).hasMessage("Le matricule ne peut être null et doit commencer par un C !");
-
-    }
-    //END--
-
-    //caTraite null et negatif (same)
-    //BEGIN--
-    @Test
-    public void testCalculPerformanceCommercialNullObjectifCa(){
-
-        //hasMessage permet de vérifier si augmenterSalaire à Trhow que le salaire était null
-        Assertions.assertThatThrownBy(() -> employeService.calculPerformanceCommercial("C12345", 1l, null)).hasMessage("L'objectif de chiffre d'affaire ne peut être négatif ou null !");
-
-    }
-
-    @Test
-    public void testCalculPerformanceCommercialNegatifObjectifCa(){
-
-        Assertions.assertThatThrownBy(() -> employeService.calculPerformanceCommercial("C12345", 1l, -5l)).hasMessage("L'objectif de chiffre d'affaire ne peut être négatif ou null !");
-
-    }
-    //END--
-
-    //je donne matricule CCCCCCC
-
-    @Test
-    public void testCalculPerformanceCommercialEmployeNull(){
-        String matricule = "CCCCCCC";
-
-        Assertions.assertThatThrownBy(() -> employeService.calculPerformanceCommercial(matricule, 1l, 1l)).hasMessage("Le matricule " + matricule + " n'existe pas !");
-
-    }
-
-    //Cas 1 il passe à travers et tombe sur 1
-    @Test
-    public void testCalculPerformanceCasUn() throws EmployeException {
-        when(employeRepository.findByMatricule("C00001")).thenReturn(new Employe("BOB", "Billie", "C00001", LocalDate.now(), 1000d, 1, 1d));
-        when(employeRepository.avgPerformanceWhereMatriculeStartsWith("C")).thenReturn(null);//On empèche l'ajout afin de voir plus facilement si le test fonctionnent pour performance
-
-        employeService.calculPerformanceCommercial("C00001", 1l, 2l);
-        ArgumentCaptor<Employe> employe = ArgumentCaptor.forClass(Employe.class);
-        Mockito.verify(employeRepository, Mockito.times(1)).save(employe.capture());
-        Assertions.assertThat(employe.getValue().getPerformance()).isEqualTo(1);
-    }
-
-    //Cas 2 inferieur entre 20 et 5 pourcent donc il trouve 2 -2 = 0 il choisira 1 car 1 sup à 0
-    @Test
-    public void testCalculPerformanceCasDeux() throws EmployeException {
-
-        when(employeRepository.findByMatricule("C00001")).thenReturn(new Employe("BOB", "Billie", "C00001", LocalDate.now(), 1000d, 2, 1d));
-        when(employeRepository.avgPerformanceWhereMatriculeStartsWith("C")).thenReturn(null);
-
-        employeService.calculPerformanceCommercial("C00001", 85l, 100l);
-        ArgumentCaptor<Employe> employe = ArgumentCaptor.forClass(Employe.class);
-        Mockito.verify(employeRepository, Mockito.times(1)).save(employe.capture());
-        Assertions.assertThat(employe.getValue().getPerformance()).isEqualTo(1);
-    }
-
-    //Cas 3 entre -5 et 5 pourcent donc 3(performance) + rien = 3
-    @Test
-    public void testCalculPerformanceCasTrois() throws EmployeException {
-        when(employeRepository.findByMatricule("C00001")).thenReturn(new Employe("BOB", "Billie", "C00001", LocalDate.now(), 1000d, 3, 1d));
-        when(employeRepository.avgPerformanceWhereMatriculeStartsWith("C")).thenReturn(null);
-
-        employeService.calculPerformanceCommercial("C00001", 96l, 100l);
-        ArgumentCaptor<Employe> employe = ArgumentCaptor.forClass(Employe.class);
-        Mockito.verify(employeRepository, Mockito.times(1)).save(employe.capture());
-        Assertions.assertThat(employe.getValue().getPerformance()).isEqualTo(3);
-    }
-
-    //Cas 4 sup de 5 à 20 pourcent donc 4(performance) + 1 = 5
-    @Test
-    public void testCalculPerformanceCasQuatre() throws EmployeException {
-        when(employeRepository.findByMatricule("C00001")).thenReturn(new Employe("BOB", "Billie", "C00001", LocalDate.now(), 1000d, 4, 1d));
-        when(employeRepository.avgPerformanceWhereMatriculeStartsWith("C")).thenReturn(null);
-
-        employeService.calculPerformanceCommercial("C00001", 115l, 100l);
-        ArgumentCaptor<Employe> employe = ArgumentCaptor.forClass(Employe.class);
-        Mockito.verify(employeRepository, Mockito.times(1)).save(employe.capture());
-        Assertions.assertThat(employe.getValue().getPerformance()).isEqualTo(5);
-    }
-
-    //Cas 5 sup à 20 pourcent donc 5(performance) + 4(au dessus de 20) = 9
-    @Test
-    public void testCalculPerformanceCasCinq() throws EmployeException {
-        when(employeRepository.findByMatricule("C00001")).thenReturn(new Employe("BOB", "Billie", "C00001", LocalDate.now(), 1000d, 5, 1d));
-        when(employeRepository.avgPerformanceWhereMatriculeStartsWith("C")).thenReturn(null);
-
-        employeService.calculPerformanceCommercial("C00001", 160l, 100l);
-        ArgumentCaptor<Employe> employe = ArgumentCaptor.forClass(Employe.class);
-        Mockito.verify(employeRepository, Mockito.times(1)).save(employe.capture());
-        Assertions.assertThat(employe.getValue().getPerformance()).isEqualTo(9);
-    }
 
 
 }
